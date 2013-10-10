@@ -29,7 +29,7 @@ function generateNonce() {
 // Check if $_SESSION['nonce'] is set. If not set it with new psudo random nonce
 if ($_SESSION['nonce'] == "") {
 	$nonce = generateNonce();	
-	$message = "sqrl.host56.com/?sqrl=$nonce";
+	$message = "sqrl.host56.com/sqrl_verify.php?webnonce=$nonce";
 	$_SESSION['nonce'] = "$message"; // set the session
 	
 	// insert new nonce in DB
@@ -69,6 +69,11 @@ mysql_close();
 
 <html>
 Test page for sqrl authentication<br>
-<img src="https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=<?php $nonce = $_SESSION['nonce']; echo "http%3A%2F%2F$nonce"; ?>&choe=UTF-8" title="SQRL" />
-<a href="<?php $nonce = $_SESSION['nonce']; echo "http%3A%2F%2F$nonce"; ?>">SQRL</a> 
+<?php 
+	$nonce = $_SESSION['nonce'];
+	$URL = "qrl%3A%2F%2F$nonce";
+?>
+
+<img src="https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=<?php  echo "$URL"; ?>&choe=UTF-8" title="SQRL" />
+<a href="<?php $nonce = $_SESSION['nonce']; echo "$URL"; ?>">SQRL</a> 
 </html>
