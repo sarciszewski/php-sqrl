@@ -72,7 +72,7 @@ if ($v) { // if the message got verified
 	$user_id=mysql_result($result,0,"id"); // get user ID
 	
 	// update the nonce with user info
-	mysql_query("UPDATE nonce SET user = '$user_id'");	  	
+	mysql_query("UPDATE nonce SET user = '$user_id' WHERE message LIKE '$message'");	  	
 	
 	mysql_close();
 	echo "Verified";
