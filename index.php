@@ -29,11 +29,11 @@ function generateNonce() {
 // Check if $_SESSION['nonce'] is set. If not set it with new psudo random nonce
 if ($_SESSION['nonce'] == "") {
 	$nonce = generateNonce();	
-	$message = "sqrl.host56.com/sqrl_verify.php?webnonce=$nonce";
+	$message = "$domain/sqrl_verify.php?webnonce=$nonce";
 	$_SESSION['nonce'] = "$message"; // set the session
 	
 	// insert new nonce in DB
-	mysql_connect("mysql9.000webhost.com",$user,$password);
+	mysql_connect($host,$user,$password);
 	@mysql_select_db($database) or die( "Unable to select database");
 	$unixtime = time(); // time so we can delete it when it gets old
 	mysql_query("INSERT INTO nonce VALUES ('','$message', $unixtime ,-1)");  // add the new nonce
@@ -41,7 +41,7 @@ if ($_SESSION['nonce'] == "") {
 }
 
 // *** Check if the user has logged in
-mysql_connect("mysql9.000webhost.com",$user,$password);
+mysql_connect($host,$user,$password);
 @mysql_select_db($database) or die( "Unable to select database");
 
 // get the nonce from db

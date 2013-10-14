@@ -43,7 +43,7 @@ $publicKey = $_POST['publicKey'];
 $v = verify($message, $signature, $publicKey);
 
 if ($v) { // if the message got verified
-	mysql_connect("mysql9.000webhost.com",$user,$password);
+	mysql_connect("$host",$user,$password);
 	@mysql_select_db($database) or die( "Unable to select database");
 	
 	// find the nonce we made in DB
