@@ -2,19 +2,74 @@
 session_start();
 include 'config.php';
 
-// This needs to be better
+// I made it better!
 function get_random_string($length)
 {
-	$valid_chars = "qwertyuiopasdfghjklzxcvbnm@£&%{[]}";
+	$valid_chars = "qwertyuiopasdfghjklzxcvbnm@Â£&%{[]}";
 	$num_valid_chars = strlen($valid_chars);
- 
+	
 	$random_string = "";
-	for ($i = 0; $i < $length; $i++)
+	for ($i = 0; $i < $length; ++$i)
 	{
-		$random_pick = mt_rand(1, $num_valid_chars);
-		$random_string .= $valid_chars[$random_pick-1];
+		$random_pick = random_int(0, $num_valid_chars - 1);
+		$random_string .= $valid_chars[$random_pick];
 	}
 	return $random_string;
+}
+
+// Get a cryptographically secure random integer within a given range
+function random_int($min, $max) {
+	if ($max <= $min) {
+		trigger_error("Invalid parameters passed to random_int()", E_USER_WARNING);
+		return null;
+	}
+	
+	$rval = 0;
+	$range = $max - $min;
+	
+	$need_bits = ceil(log($range, 2));
+	
+	// Create a bitmask
+	$mask = intval( pow(2, $need_bits) - 1); // 7776 -> 8191
+	
+	// Number of random bytes to fetch
+	$need_bytes = ceil($need_bits / 8);
+	
+	// Let's grab a random byte that falls within our range
+	do {
+		$rval = intval(get_random_bytes($need_bytes) & $mask);
+	} while($rval> $range);
+	// We now have a random value in the range between $min and $max, so...
+	
+	// Let's return the random value + the minimum value
+	return $rval + $min;
+}
+
+// Get a cryptographically secure sequence of random bytes
+function get_random_bytes($number)
+{
+	if($number < 1) {
+		$number = 1;
+	}
+	$number = intval($number);
+	// Now that we've got that out of our system
+	$buf = '';
+	if (is_readable('/dev/urandom')) {
+		$fp = fopen('/dev/urandom', 'rb');
+		if($fp !== false) {
+			$buf = fread($fp, $number);
+		}
+	}
+	if (empty($buf) && function_exists('mcrypt_create_iv') && defined('MCRYPT_DEV_URANDOM')) {
+		$buf = mcrypt_create_iv($number, MCRYTP_DEV_URANDOM);
+	}
+	if (empty($buf) && function_exists('openssl_random_pseudo_bytes')) {
+		$buf = openssl_random_pseudo_bytes($number);
+	}
+	if (empty($buf)) {
+		trigger_error("No suitable random number generator exists!", E_USER_ERROR);
+	}
+	return $buf;
 }
  
 function generateNonce() {
